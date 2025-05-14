@@ -1,0 +1,487 @@
+\documentclass[a4paper, draft]{article}
+\pagestyle{headings}
+
+\title{Superconducting capacitors applied to flux quantum bits}
+
+\usepackage{amsmath,amsthm, amsfonts,amscd, amssymb}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{url}
+\usepackage[final]{graphicx}
+\usepackage{graphicx}
+
+
+
+% Numbering
+
+%\numberwithin{section}{chapter}
+%\numberwithin{equation}{chapter}
+
+% Theorem environments
+
+%% \theoremstyle{plain} %% This is the default
+\newtheoremstyle{own}
+    {3pt}                    % Space above
+    {3pt}                    % Space below
+    {\itshape}                   % Body font
+    {}                           % Indent amount
+    {\scshape}                   % Theorem head font
+    {.}                          % Punctuation after theorem head
+    {.5em}                       % Space after theorem head
+    {}  % Theorem head spec (can be left empty, meaning ‘normal’)
+    
+\theoremstyle{own}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{ax}{Axiom}[section]
+
+%% \theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+
+%% \theoremstyle{remark}
+\newtheorem{rem}{Remark}[section]
+\newtheorem*{notation}{Notation}
+\theoremstyle{remark}
+\newtheorem*{example}{Example}
+
+%% formatting quotes
+\newif\ifquoteopen
+\catcode`\"=\active % lets you define `"` as a macro
+\DeclareRobustCommand*{"}{%
+   \ifquoteopen
+     \quoteopenfalse ''%
+   \else
+     \quoteopentrue ``%
+   \fi
+}
+
+%  Math definitions
+
+% Fields
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\quat}{\mathbb{H}}
+
+%Groups 
+\newcommand{\Lo}{\mathbf{O}(3,1)}
+\newcommand{\SL}{\mathbf{SL}}
+\newcommand{\SU}{\mathbf{SU}}
+\newcommand{\Spin}{\mathbf{Spin}}
+\newcommand{\Pin}{\mathbf{Pin}}
+\newcommand{\SO}{\mathbf{SO}}
+\newcommand{\Poincare}{\mathcal{P}}
+\newcommand{\Poincarecov}{\widetilde{\mathcal{P}}}
+\newcommand{\Poincareprop}{\widetilde{\mathcal{P}}_+^{\uparrow}}
+\newcommand{\Aut}{\mathrm{Aut}}
+
+% Rings
+\newcommand{\End}{\mathrm{End}}
+\newcommand{\CCl}{\mathbb{C}\mathrm{l}}
+\newcommand{\Cl}{\mathrm{Cl}}
+\newcommand{\Mat}{\mathrm{Mat}}
+
+
+%Three-vectors
+\newcommand{\xt}{\mathbf{x}}
+\newcommand{\yt}{\mathbf{y}}
+\newcommand{\pt}{\mathbf{p}}
+\newcommand{\nt}{\mathbf{n}}
+\newcommand{\sigmat}{\mathbf{\sigma}}
+
+% Vector spaces
+\newcommand{\Hil}{\mathcal{H}}
+
+% Other
+\newcommand{\calE}{\mathcal{E}}
+\newcommand{\calD}{\mathcal{D}}
+\newcommand{\calF}{\mathcal{F}}
+\newcommand{\calP}{\mathcal{P}}
+\newcommand{\Fock}{\mathcal{F}}
+\newcommand{\Op}{\mathrm{Op}}
+\newcommand{\equalsoalpha}{\stackrel{\mathcal{O}(\alpha)}{=}}
+\newcommand\smallO{
+  \mathchoice
+    {{\scriptstyle\mathcal{O}}}% \displaystyle
+    {{\scriptstyle\mathcal{O}}}% \textstyle
+    {{\scriptscriptstyle\mathcal{O}}}% \scriptstyle
+    {\scalebox{.7}{$\scriptscriptstyle\mathcal{O}$}}%\scriptscriptstyle
+  }
+
+\DeclareMathOperator{\per}{per}
+\DeclareMathOperator{\sign}{sgn}
+\usepackage{amsmath}
+
+\begin{document}
+\author{Conrad S., Gabriel W., Jackson S., Imad D., and Evan P.}
+\maketitle
+
+%Start typing here!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Abstract
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center} {\normalsize\textbf{Abstract}} \end{center}
+Despite the "qu" in front of the "bit", what is so special about qubits? Well, a qubit possesses two distinct advantages originating from quantum mechanics. The first of which is superposition, or the state of existing in uncertainty. The second aspect is entanglement, which is a behavior that can pertain to a group of qubits. For instance, two qubits that are entangled can represent $4! = 24$ states before being observed while two conventional bits can represent only $2^2 = 4$ states before being observed. Because of this fact, lots of resources have been spent in this field which has resulted in many different architectures with their respective benefits and drawbacks. Some of these architectures are Trapped Ion qubits, Photonic qubits, Topological qubits, and Superconducting qubits. One of the oldest families of architectures in this list is the Superconducting family. This family was first started with three distinct qubits, the Phase(Cooper-pair box), Flux, and Charge qubits. Since then many more hybrid architectures have been created. In this paper, we will be examining the flux qubit which was born in an MIT lab in 1999. To study this architecture, we will introduce fundamental concepts such as superconductors, particle spins, Cooper pairs, Josephson junctions, Josephson relations, and Josephson inductance. These fundamentals will help us understand the flux qubit from the ground up. Then with this grassroots understanding, we will account for all energies in our circuit so that we can examine the potential well and low-level energies of the flux qubit. Finally, we will conclude by briefly analyzing the difference between a single-junction flux qubit and a three-junction flux qubit, which is the most popular version of the two.
+\newpage
+\begin{center} {\normalsize\textbf{Introduction}} \end{center}
+
+Josephson junctions allow for the creation of quantized voltage and current states, which are essential for both the construction and the control of qubits. Although new superconducting qubit architectures have emerged, Josephson junctions remain just as relevant to these technologies as they were two decades ago. This is mainly because of the Junction's properties like non-linearity. Additionally, the flux qubit provides a well-studied architecture from which scientists can build on. As a result, the topics discussed in this paper are still relevant in implementations such as those by IBM, Google, and Rigetti \cite{ezratty2023perspective}.
+
+\begin{center} {\normalsize\textbf{Superconductors}} \end{center}
+
+As the name implies, a superconductor is a material that is super good at conducting below a certain temperature. For example, aluminum can become superconducting once below 1.2 Kelvin, which translates to -271.95 Celsius\cite{ScienceDaily_2015}. When materials such as aluminum pass this threshold, there exists a current below which electrons can flow through the material with zero resistance. To understand the fundamentals of this phenomenon we have to look at particle spins. At this point, you may be wondering what spin is. For starters, there are two types of spin, namely integer spin and non-integer spin. A nice way to think about integer spin is to compare it with the daily rotation of the Earth. As the Earth rotates, it attains some angular momentum and a magnetic field called a magnetic moment. Similarly, small integer spin particles also have some angular momentum like our planet. Because of this, we can think of these particles as little magnets. Now unfortunately non-integer spin particles don't have as nice of an analogy. In fact, they don't even have angular momentum. The only reason they are still classified as a spin is because they behave as if they have some angular momentum because of the symmetry of space-time. But for simplicity, let's use our analogy on electrons which are non-integer spins. So, in a typical conducting wire, these little magnets(electrons) are always bouncing off one another. However, once a material has become superconducting, a new relation called a Cooper pair can now exist. A Cooper pair is a much more harmonious relationship where these little magnets can line up next to each other creating a condensate. Because of this relationship, coherence is formed where there is no resistance in the wire.
+
+\begin{center} {\normalsize\textbf{Quantum Tunneling}} \end{center}
+
+Next, we build off this idea of superconductors to examine a superconducting ring with a small gap separating one side of the ring from the other. Now, conventionally, if you were to coast your bike up a hill without pedaling, you might get over the hill, but you also might not. It all comes down to the amount of kinetic energy you have before attempting to go over the hill. Now, if we think of this gap in our superconductor as a hill, it would be tempting to think that the electrons are in the same situation as you and your bike. However, that is not the case. To illustrate this, it is important to know that everything can be represented by wave functions. An object’s wave function becomes more significant the smaller the object gets. Because of this, the Cooper pair’s wave function is extremely important for defining its position, momentum, etc. Additionally, this wave function must be defined over all space. This means that even beyond the hill the wavefunction exists. As a result, it is therefore possible for this Cooper pair to approach the hill and then suddenly be found on the other side of it. This phenomenon is called Quantum tunneling. Even though the Cooper pair can get past the hill, the wave function on the other side will vary by a phase component from the wave function before the hill. 
+As we will see in the following sections, this phase difference is extremely important for our flux qubit.
+
+\begin{center} {\normalsize\textbf{The First Josephson Relation}} \end{center}
+
+$$
+I = I_0sin(\Phi)
+$$
+
+This equation describes the supercurrent that flows across the junction in the absence of any applied voltage. Here, $I_0$ is the maximum supercurrent that can pass through the junction without generating a voltage, and $\Phi$ is the phase difference between the two superconductors. This relation is non-linear, and holds true for $I \leq I_0$. If $\Phi = 0$, there is either no Josephson Junction, which allows the wave function to be weakly correlated, or there is no supercurrent. At $\Phi = \frac{\pi}{2}$, supercurrent will be at its maximum, or equal to the critical current that the junction can sustain. At $\Phi = \pi$, the corresponding wave functions are perfectly out of sync. Meaning that each peak of one wave function corresponds to a trough of the other wave function. This results in zero supercurrent flowing. Also, at $\Phi = \pi$ is when the current in the junction changes direction.
+
+\begin{center} {\normalsize\textbf{The Second Josephson Relation}} \end{center}
+$$
+\frac{d\Phi}{dt} = \frac{2\pi V}{\Phi_0}
+$$
+The phase difference explained above also governs the second Josephson relation, which relates an applied voltage across the junction to how the phase difference between the wave functions changes with time. This second relation is extremely similar to Faraday's Law which was covered in electromagnetic physics. However, there is an important caveat to this which is that the changing flux is not created by a B-field; instead, it is created by the kinetic energy of the tunneling Cooper pairs\cite{devoret2004superconducting}. Alternatively, if a voltage is applied to the junction, then the difference in flux between the two wave functions will have to create a change that approximately equals the applied voltage. Given this reasoning, a finite applied voltage across the junction will result in an alternating supercurrent flowing through the junction.
+
+\begin{center} {\normalsize\textbf{Combining The Relations}} \end{center}
+
+Without this phase difference, these relations would not exist. Using these two relations, we will be able to find the Josephson inductance. If we differentiate the first Josephson relation with respect to time we get
+$$
+\frac{dI}{dt} = I_0cos(\Phi)\frac{d\Phi}{dt}
+$$
+Then we can substitute in the second Josephson relation to get
+
+$$
+\frac{dI}{dt} = I_0cos(\Phi)\frac{2\pi V}{\Phi_0}
+$$
+
+After rearranging to isolate voltage we get
+
+$$
+\frac{dI}{dt}(\frac{\Phi_0}{2\pi I_0cos(\Phi)}) = V
+$$
+
+Then if we recall how inductance classically relates to voltage, i.e. $V = L \frac{dI}{dt}$, then we are able to recognize that
+
+$$
+L_J = \frac{\Phi_0}{2\pi I_0cos(\Phi)}
+$$
+
+After looking at the Josephson inductance it becomes apparent that this is a non-linear quantity because of the $cos(\Phi)$ in the denominator.
+
+\begin{center} {\normalsize\textbf{Why Do We Care About Anharmonicity?}} \end{center}
+
+The non-linearity present in the Josephson inductance is what makes the Josephson junction ideal for our application. To illustrate this, we look at the allowed energies of a quantum harmonic oscillator. The energies that can exist in a quantum harmonic oscillator are $E_n = (n+\frac{1}{2})\hbar\omega$. After inspecting the first three energy levels, it is clear that each subsequent level differs by a constant $\hbar\omega$. If we were to use this scheme for our qubit, we could easily lose our qubit by accidentally adding an extra quantity of energy, which would excite our qubit to an unwanted energy level. The following figure\cite{krantz2019quantum} is of a Transmon qubit's potential contrasted against an LC oscillator's potential to show the effect of adding a Josephson junction to the circuit.
+
+$$
+\includegraphics[width=\textwidth]{images/non-linearity.png}
+$$
+
+So by using a Josephson junction, we take advantage of non-linearity. Below is the LCJ circuit\cite{wendin2017quantum} we will be modeling.
+
+$$
+\includegraphics[width=\textwidth]{images/LCJ CIrcuit.png}
+$$
+
+\begin{center} {\normalsize\textbf{Defining the Hamiltonian}} \end{center}
+
+Our Hamiltonian will account for all energies present in our circuit\cite{wendin2017quantum} above. By defining the Hamiltonian we will be able to graph the potential energy and calculate the energy required to go from $|0 \rangle $ to $|1 \rangle $. 
+There are three components to our Hamiltonian. The first is the energy stored in the capacitor. Which is
+$$
+E_c(\hat{n}-n_g)^2
+$$
+The second is energy stored in the Josephson junction. This term is what differentiates our circuit from a regular LC oscillator. 
+
+$$
+- E_J \cos(\hat{\Phi})
+$$
+
+where
+
+$$
+E_J = \frac{\hbar^2}{4e^2L_J}
+$$
+
+As we can see $E_J$ is dependent on the Josephson inductance, which as we saw earlier is non-linear. Now moving onto the last component of our Hamiltonian, which is the energy stored in the inductor.
+
+$$
+\frac{E_L}{2}( \Phi  - \Phi_{ext})^2
+$$
+
+With all of these parts added together we get:
+
+$$
+H = E_c(\hat{n}-n_g)^2 - E_J \cos(\hat{\Phi}) + \frac{E_L}{2}( \Phi  - \Phi_{ext})^2
+$$
+
+In the equation above, $E_J = \frac{\hbar^2}{4e^2L_J}$ is the Josephson energy; $E_L = \frac{\hbar^2}{4e^2L}$ is the shunt inductance; and $E_c = \frac{(2e)^2}{2C}$ is the shunt capacitance\cite{wendin2017quantum}. Additionally, $\hat{n}$ is the charge on the capacitor and $\hat{\Phi}$ is the phase difference across the circuit. Lastly, it is important to mention that
+
+$$
+[\hat{\Phi},\hat{n}] = i
+$$
+
+This implies that $\hat{\Phi}$ and $\hat{n}$ do not commute. Which means that both of their expectation values can not be simultaneously known.
+
+$$
+\Delta\hat{\Phi}\Delta\hat{n} \ge \frac{1}{2}
+$$
+
+
+
+With our Hamiltonian defined, we can now move further into investigating our ideal system. In order to change the Hamiltonian, we can apply external flux to our circuit. Interestingly, because this is a quantized circuit we must apply discrete amounts of flux into our system. This idea is referred to as magnetic flux quantization. To do this we can use a superconducting transformer. On the primary coil, we can apply an external current to generate a magnetic field which according to Faraday's law will induce flux in our qubit. Although being able to manipulate this system is great, where is our quantum information stored? Well, by generating a flux in our loop, there will be a resulting current. This current can either flow in a clockwise or counterclockwise direction corresponding to the logical qubit states $|0 \rangle$ and $|1 \rangle$. But because of the system’s quantum mechanical nature, the current can also exist in a superposition of both directions, which we will discuss later.
+
+$$
+|0 \rangle = \frac{1}{\sqrt{2}}(|\circlearrowleft \rangle + |\circlearrowright \rangle)
+$$
+
+$$
+|1 \rangle = \frac{1}{\sqrt{2}}(|\circlearrowleft \rangle - |\circlearrowright \rangle)
+$$
+
+
+\begin{center} {\normalsize\textbf{Graphing the Potential}} \end{center}
+
+Since we have already looked at the Hamiltonian associated with our qubit, we should now be able to figure out what the potential should look like. To do this we just need to isolate the potential terms from the kinetic terms. In order to make this relatively straightforward, we introduce
+
+$$
+\hat{n} = -i\hbar\frac{\partial}{\partial \Phi}
+$$
+
+Notice the resemblance between this and $\hat{p} = -i\hbar\frac{\partial}{\partial x}$. In fact, in our system $\hat{\Phi}$ is analogous to $\hat{x}$ and $\hat{n}$ is analogous to $\hat{p}$. Using this observation it is now apparent that our kinetic term in the Hamiltonian is
+$$
+E_C \hat{N}^2
+$$
+which leaves
+$$
+V(x) = - E_J \cos(\hat{\Phi}) + \frac{E_L}{2}( \Phi  - \Phi_{ext})^2
+$$
+as our potential. With this, we can now make a couple of further observations. For instance, if we let $s = \hat{\Phi}  - \Phi_{ext}$, then we can observe that this potential will be a parabolic effected by an oscillating $cos(\hat{\Phi})$ term. However, to put this observation onto a graph, we will find a representation of this potential that is unitless. To do this, we divide the potential by $E_J$ to get
+
+$$
+\frac{V(x)}{E_J} = - \cos \hat{\Phi} + \frac{E_L}{E_J} ( \hat{\Phi}  - \Phi_{ext})^2
+$$
+We can further simplify this equation if we recall from above that $E_L = \frac{\hbar^2}{4e^2L}$ and $E_J = \frac{\hbar^2}{4e^2L_J}$. Using these two equations we get
+$$
+\frac{V(x)}{E_J} = - \cos \hat{\Phi} + \frac{1}{2}\frac{L_J}{L} ( \hat{\Phi}  - \Phi_{ext})^2
+$$
+To further simplify this equation we need to introduce the aspect ratio $\lambda = \frac{L_J}{L} -1$.
+\cite{devoret2004superconducting}. If we do this, then there are three distinct regions where $\lambda$ can reside. The first region is where $\lambda < 0$. In this region, the Josephson inductance is dominated by the characteristic inductance of the circuit. This results in more non-linearity in the system. In the second region where $\lambda = 0$, the Josephson inductance is balanced with the characteristic inductance of the circuit. This would lead to more of a resemblance to the LC harmonic oscillator. Lastly, the final region where $\lambda > 0$. In this region, the potential once again resembles more of an LC oscillator. So now that we know how this new $\lambda + 1$ expression will behave let's substitute it into our Hamiltonian to get
+$$
+\frac{V(x)}{E_J} = - \cos \hat{\Phi} + \frac{1}{2}(\lambda + 1) ( \hat{\Phi}  - \Phi_{ext})^2
+$$
+Lastly, let's search for a symmetry to make the $\hat{\Phi}$ in the Hamiltonian easier to deal with. Well, we know that $x^2$ is symmetric about the y-axis. Additionally, we know that $-cos(x)$ is symmetric about the y-axis in intervals of $\pi$. If we let $\hat{\Phi} = x+ \pi$ then we would be able to utilize both of our observations from above. This would result in
+$$
+\frac{V(x)}{E_J} = - \cos(x+ \pi) + \frac{1}{2}(\lambda + 1) ( x+ \pi  - \Phi_{ext})^2
+$$
+Additionally, we can remove the minus sign in front of the $-cos(x+\pi)$ if we also remove the $\pi$ in the argument. This would result in a further simplification
+$$
+\frac{V(x)}{E_J} = \cos(x) + \frac{1}{2}(\lambda + 1) ( x+ \pi  - \Phi_{ext})^2
+$$
+For our final step, we set $\lambda = -.95$. Additionally, if we bias the potential with  $\Phi_{ext} = \frac{\Phi_0}{2}$ which really boils down to $\Phi_{ext} =\pi$, then we will create the double-well potential. This gives us the potential
+$$
+\frac{V(x)}{E_J} = \cos(x) + \frac{1}{2}(-.95 + 1) ( x)^2
+$$
+$$
+\includegraphics[width=\textwidth]{images/potential_1.png}
+$$
+This potential allows for two degenerate states to exist, one in the left local minima and the other in the right local minima. Separating these minimas is a "hill" which as you might suspect by now does not entirely separate the two degenerate states because of quantum tunneling. This behavior in the double-well potential is called tunnel coupling. As a result of tunnel coupling a superposition of the two degenerate states can exist which is one of the main reasons why this circuit can function as a qubit\cite{robertson2006quantum}.
+
+\begin{center} {\normalsize\textbf{Finding the First Three Eigenenergies}} \end{center}
+
+Let us start this section by first considering the potential ways to get the Eigenenergies of our system. The first option is to represent the Hamiltonian as a linear second-order differential equation also known as a WKB approximation. Unfortunately, this approach can get messy in a hurry. However, there is a second approach which entails representing the Hamiltonian as an infinite matrix. Luckily we don't have to compute an infinite matrix. Instead, we just need to compute a sufficiently large matrix. Further, to keep this problem relatively simple, we will use a well-documented approach that essentially uses the infinite square well as a petri dish for our Hamiltonian. This approach produces results with less than a $.2\%$ error in the ground state energies even when truncating the matrix at a relatively small size of 20 x 20 providing that the infinite square well length is sufficiently large\cite{JelicMarsiglio}.
+
+\begin{equation}
+\psi_n(x) = \begin{cases}
+\sqrt{\dfrac{2}{L}} \sin{\Big( \dfrac{n \pi (x+\frac{L}{2})}{L} \Big)} & \text{if $-\frac{L}{2} < x < \frac{L}{2}$} \\ 0 & \text{otherwise}
+\end{cases}
+\label{infinite_square_well_wavefunction_Shifted_Left} 
+\end{equation}
+
+The only difference between this wave function and the wave function for the infinite square well is the $\frac{L}{2}$ shift in the argument. This shift will allow us to use the symmetry of the infinite square well and double-well potential about the y-axis in the region $-\frac{L}{2} < x < \frac{L}{2}$. Now that we have defined the environment we will be working in, let's look at the problem we will have to tackle.
+
+\begin{eqnarray}
+H_{nm} = & &\langle \psi_n|\hat{H}|\psi_m \rangle = E_C\langle \psi_n|\hat{N}^2|\psi_m \rangle \nonumber \\
+&&+ E_J \langle \psi_n|-\cos (\hat{\Phi})|\psi_m \rangle
++ E_L \langle \psi_n|(\hat{\Phi}  - \Phi_{ext})^2|\psi_m \rangle
+\label{ham_matrix_V.1}
+\end{eqnarray}
+
+It is probably worth noting that $\psi_n$ and $\psi_m$ are just different states within the same basis of the infinite square well. Secondly, we can make our lives a bit easier with this equation by introducing some of the simplifications we made for the potential well above. Namely, we can introduce $\hat{\Phi} = x+ \pi$ and let $\Phi_{ext} = \pi$. These choices give us
+\begin{eqnarray}
+H_{nm} = & &\langle \psi_n|\hat{H}|\psi_m \rangle = E_C\langle \psi_n|\hat{N}^2|\psi_m \rangle \nonumber \\
+&&+ E_J \langle \psi_n|\cos{x}|\psi_m \rangle
++ E_L \langle \psi_n|x^2|\psi_m \rangle
+\label{ham_matrix_V.2}
+\end{eqnarray}
+
+We can further simplify this equation by recognizing that $\hat{N}^2 = (-i\nabla)^2$ which is equivalent to $\hat{N}^2 = -\nabla^2$. Additionally, because of how we set up the problem, we are restricted to one dimension, so $\hat{N}^2 = -\frac{\partial{^2}}{\partial {^2}x}$. After substituting this into the Hamiltonian we get
+
+\begin{eqnarray}
+H_{nm} = & &\langle \psi_n|\hat{H}|\psi_m \rangle = E_C\langle \psi_n|-\frac{\partial{^2}}{\partial {^2}x}|\psi_m \rangle \nonumber \\
+& &+ E_J \langle \psi_n|\cos{x}|\psi_m \rangle
++ E_L \langle \psi_n|x^2|\psi_m \rangle
+\label{ham_matrix_V.3}
+\end{eqnarray}
+
+With the Hamiltonian in its current state, we are now ready to refine this into a problem where a computer can easily crunch the numbers.
+
+
+\begin{eqnarray}
+\langle \psi_n|-\frac{\partial{^2}}{\partial {^2}x}|\psi_m \rangle = & & {\frac{m^2\pi^2}{L^3}}\!\int_{-\frac{L}{2}}^\frac{L}{2} \cos{\Big(\frac{(n-m) \pi (x+\frac{L}{2})}{L} \Big)}dx
+\nonumber\\& & -{\frac{m^2\pi^2}{L^3}}\!\int_{-\frac{L}{2}}^\frac{L}{2}\cos{\Big(\frac{(n+m) \pi (x+\frac{L}{2})}{L} \Big)dx}
+\end{eqnarray}
+
+\begin{eqnarray}
+\langle \psi_n|cos(x)|\psi_m \rangle = & & {\frac{1}{L}}\!\int_{-\frac{L}{2}}^\frac{L}{2}\cos{x}\cos{\Big(
+\frac{(n-m) \pi (x+\frac{L}{2})}{L} \Big)dx}
+\nonumber\\& &
+-{\frac{1}{L}}\!\int_{-\frac{L}{2}}^\frac{L}{2} 
+\cos{x}\cos{\Big(
+\frac{(n+m) \pi (x+\frac{L}{2})}{L} \Big)} dx
+\end{eqnarray}
+
+\begin{eqnarray}
+\langle \psi_n|x^2|\psi_m \rangle = & & {\frac{1}{L}}\!\int_{-\frac{L}{2}}^\frac{L}{2} x^2\cos{\Big(\frac{(n-m) \pi (x+\frac{L}{2})}{L} \Big)} 
+\nonumber\\& &
+-{\frac{1}{L}}\!\int_{-\frac{L}{2}}^\frac{L}{2}x^2\cos{\Big(\frac{(n+m) \pi (x+\frac{L}{2})}{L} \Big)}dx
+\end{eqnarray}
+In this form, all we need to do is put them into SciPy to calculate the integrals with the provided values of $L,n,m$. Let's set $L = 50$, since $L$ which is the length of the infinite potential needs to be sufficiently long. As for n and m, they will be the nth row and mth column of the matrix. Below is an illustration of the matrix.
+$$
+\langle \psi_n|\hat{H}|\psi_m \rangle = 
+$$
+\[
+\begin{bmatrix}
+\langle 1|\hat{H}|1 \rangle & \langle 1|\hat{H}|2 \rangle & ... & \langle 1|\hat{H}|m \rangle\\
+\langle 2|\hat{H}|1 \rangle & ... & ... & ... \\
+... & ... & ... & ...\\
+\langle n|\hat{H}|1 \rangle & ... & ... & \langle n|\hat{H}|m \rangle
+\end{bmatrix}
+\]
+If we let the matrix be sufficiently large, say 50 x 50, then we will be able to approximate the lower eigenenergies of our system with over a $99.8\%$ accuracy \cite{JelicMarsiglio}. 
+
+So, piecing our problem back together, there are still constants that we need to assign values to. For instance, the charging energy $E_C$ and the Josephson energy $E_J$. The ratio $\frac{E_J}{E_C}$ determines the level of anharmonicity(non-linearity) and charge dissipation of the circuit\cite{koch2007charge}.
+
+
+Typically, a flux qubit will operate in a region where $E_J$ is much larger than $E_C$. This allows for the phase aspect to be well defined while the charge aspect fluctuates with time.
+
+Since we want $E_J$ to be much larger, we will set the ratio of $\frac{E_J}{E_C} = 10$ \cite{you2005superconducting}. To satisfy this ratio we will set $E_J = 1$ and $E_C = .1$. Finally, let's look at the double-well potential we graphed previously.
+
+$$
+\frac{V(x)}{E_J} = - \cos \hat{\Phi} + \frac{E_L}{E_J} ( \hat{\Phi}  - \Phi_{ext})^2
+$$
+Which we were able to get into the form of
+$$
+\frac{V(x)}{E_J} = \cos(x) + \frac{1}{2}(\lambda + 1) ( x+ \pi  - \Phi_{ext})^2
+$$
+or by multiplying both sides by $E_J$
+$$
+V(x) = E_J(\cos(x) + \frac{1}{2}(\lambda + 1) ( x+ \pi  - \Phi_{ext})^2)
+$$
+
+Let's utilize the simplifications we performed on the potential and apply them to the Hamiltonian below.
+
+$$
+\langle \psi_n|\hat{H}|\psi_m \rangle = E_C\langle \psi_n|-\frac{\partial{^2}}{\partial {^2}x}|\psi_m \rangle \nonumber \\
+$$
+
+\begin{eqnarray}
+&+ E_J \langle \psi_n|\cos{x}|\psi_m \rangle
++ \frac{E_J(\lambda+1)}{2} \langle \psi_n|x^2|\psi_m \rangle
+\label{ham_matrix_V. Final}
+\end{eqnarray}
+
+With this, all we have left to do is run the matrix through a computer with $\lambda = -.95$, $E_C = .1$, $E_J = 1$, $L=50$, and the matrix cut-off limit at 50 x 50. With these values we get the ground state at $-0.5396E_J$ and the first excited state at $-0.5363E_J$, with an energy difference of $0.0033E_J$. What is even more interesting is the obvious non-linearity of our Eigenenergies because the second excited state is at $-0.0881E_J$ which is a difference of $0.4482E_J$ between the first excited state and the second excited state. This means that our two-level system is sufficiently isolated from higher energy levels.
+
+\begin{center} {\normalsize\textbf{Utilizing SQUIDs with flux Qubits}} 
+\end{center}
+
+Now that we know the energy required to change states, lets look at how we can determine what state our qubit is in. To discover the information withheld in a flux qubit, we must use a superconducting quantum interference device. Also known as a SQUID, these devices utilize Josephson junctions to quantify the flux from the Qubit into a binary result. In order to understand how SQUIDs do this we must once again look at the Josephson relations.
+
+$$
+I = I_0sin(\Phi)
+$$ 
+
+$$
+\frac{d\Phi}{dt}\frac{\Phi_0}{2\pi} = V
+$$
+Combining these two relations like previously done for finding the Josephson inductance yields:
+$$
+\frac{dI}{dt} \frac{\Phi_0}{2\pi I_0cos(\Phi)} = V
+$$
+This shows that the voltage across the junction is proportional to the product of the change in current and inductance of the junction. So when the external flux generates enough current within the SQUID, a voltage is generated. This voltage will collapse the wave function into a measured state of $|0\rangle$ or $|1 \rangle$ depending on the direction of the current.  This process will be conducted several times to determine the overall state of the system statistically.
+
+$$
+\includegraphics[width=\textwidth]{images/qubitSQUID.png}
+$$
+Above is an example of a SQUID used to measure a three-junction flux qubit\cite{physicsworld}.
+
+\begin{center} {\normalsize\textbf{The Difference Between One junction And Three}} \end{center}
+
+In many regards, the single-junction version is the toy problem for the three-junction version. To better emphasize this, let's compare their potentials. While the single-junction version has a 1D potential, the three-junction version because of its three junctions of varying sizes has a 3D potential. However, there are advantages that come along with this increase in complexity. For instance where the single-junction version has barely any tunnel coupling between the two degenerate wells, its big brother has substantial tunnel coupling\cite{robertson2006quantum}. Additionally, instead of setting the tunnel coupling by fine-tuning the critical currents like in the single-junction version, the three-junction version has its tunnel coupling set during fabrication by the widths of its junctions\cite{robertson2006quantum}. These advantages, when added up help to explain why the three-junction architecture is preferred over its single-junction counterpart.
+
+\begin{center} {\normalsize\textbf{Conclusion}} \end{center}
+
+Josephson junctions and flux qubits have been major milestones in the advancement of quantum computation. We began by introducing the phenomenon of superconductivity and the formation of Cooper pairs which are the foundational building blocks that underlie all superconducting qubits. Using this as a base framework, we explored how Josephson junctions can be integrated into superconducting loops to create flux qubits that leverage the current direction to encode quantum information. Notably, when the external magnetic flux threading the loop is tuned to $\Phi_{ext} = \frac{\Phi_0}{2}$, the potential energy landscape forms a double-well potential. Then with this potential, we were able to calculate the first three Eigenenergies of our system. This highlighted the non-linear aspect of Josephson junction which is critical for qubits. Afterwards, we covered how a SQUID would be utilized to read the qubit's state. Lastly, we covered the attributes that make the three-junction flux qubit preferable over its single-junction counterpart. All of these topics when linked together show the importance of the little superconducting capacitors called Josephson junctions.
+
+\begin{center} {\normalsize\textbf{Outlook}} \end{center}
+
+As mentioned at the beginning of this paper, the true potential of all qubits boils down to entanglement and the additional states they can represent before being measured. Using this paper as a foundation, it is now possible to dive further into superconducting qubits and understand the differences between Phase, Charge, and Flux qubits. Another potential avenue would be looking further into three-junction flux qubits. This would mean extrapolating our 1D potential into a more complex but potentially more insightful 3D potential. With this paper, it should now be easier to venture beyond the surface of superconducting qubits.
+
+
+\newpage
+\begin{thebibliography}{11}
+
+\bibitem{JelicMarsiglio}
+Jelic, V., and F. Marsiglio. "The double-well potential in quantum mechanics: a simple, numerically exact formulation." European Journal of Physics 33.6 (2012): 1651.
+
+\bibitem{koch2007charge}
+Koch, Jens, et al. "Charge-insensitive qubit design derived from the Cooper pair box." Physical Review A—Atomic, Molecular, and Optical Physics 76.4 (2007): 042319.
+
+\bibitem{you2005superconducting}
+You, J. Q., and Franco Nori. "Superconducting circuits and quantum information." Physics today 58.11 (2005): 42-47.
+
+\bibitem{devoret2004superconducting}
+Devoret, Michel H., Andreas Wallraff, and John M. Martinis. "Superconducting qubits: A short review." arXiv preprint cond-mat/0411174 (2004).
+
+\bibitem{wendin2017quantum}
+Wendin, Göran. "Quantum information processing with superconducting circuits: a review." Reports on Progress in Physics 80.10 (2017): 106001.
+
+\bibitem{krantz2019quantum}
+Krantz, Philip, et al. "A quantum engineer's guide to superconducting qubits." Applied physics reviews 6.2 (2019).
+
+\bibitem{patel2025review}
+Patel, Parth S., and Darshan B. Desai. "Review of qubit-based quantum sensing." Quantum Information Processing 24.3 (2025): 1-37.
+
+\bibitem{robertson2006quantum}
+Robertson, T. L., et al. "Quantum theory of three-junction flux qubit with non-negligible loop inductance: Towards scalability." Physical Review B—Condensed Matter and Materials Physics 73.17 (2006): 174526.
+
+\bibitem{ScienceDaily_2015}
+University of Southern California. "Clusters of aluminum metal atoms become superconductive at surprisingly high temperatures." ScienceDaily. ScienceDaily, 25 February 2015.
+
+\bibitem{physicsworld}
+Hans Mooij. "Superconducting quantum bits." Physicsworld. Physicsworld, 1 December 2004.
+
+\bibitem{ezratty2023perspective}
+Ezratty, Olivier. "Perspective on superconducting qubit quantum computing." The European Physical Journal A 59.5 (2023): 94.
+
+\end{thebibliography}
+
+
+\begin{center}{\normalsize\textbf{Code For The Calculations}} \end{center}
+\begin{center}https://github.com/conradSadler/QuantumCalculation
+\end{center}
+
+
+\end{document}
+
